@@ -1,0 +1,17 @@
+FROM golang:1.16
+
+WORKDIR /app
+
+RUN useradd -m appuser
+
+USER appuser
+
+RUN chown appuser /app
+
+COPY . .
+
+RUN go build
+
+RUN go test ./...
+
+CMD ["./server"]

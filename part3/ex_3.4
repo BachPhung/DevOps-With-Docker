@@ -1,0 +1,15 @@
+FROM docker:25.0-git
+
+WORKDIR /usr/src/app
+
+# Copy shell script to container
+COPY script.sh .
+
+# Make the script executable
+RUN chmod +x script.sh
+
+# Install bash (in case it's not included)
+RUN apk add --no-cache bash
+
+# Set the script as the entry point
+ENTRYPOINT ["./script.sh"]

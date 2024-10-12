@@ -1,0 +1,21 @@
+bach@Bachs-MacBook-Pro ~ % docker run -d -it devopsdockeruh/simple-web-service:ubuntu
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+85e9339d28396a1a3ee7d935f90c15088d3fbc2441b069b19a658751068a6525
+bach@Bachs-MacBook-Pro ~ % docker run -d -it devopsdockeruh/simple-web-service:alpine
+Unable to find image 'devopsdockeruh/simple-web-service:alpine' locally
+alpine: Pulling from devopsdockeruh/simple-web-service
+ba3557a56b15: Pull complete 
+1dace236434b: Pull complete 
+4f4fb700ef54: Pull complete 
+Digest: sha256:dd4d367476f86b7d7579d3379fe446ae5dfce25480903fb0966fc2e5257e0543
+Status: Downloaded newer image for devopsdockeruh/simple-web-service:alpine
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+290de8d42460429596096818cb0ac8b92c10c02a140ed6f7d37cd9d45f382b3b
+bach@Bachs-MacBook-Pro ~ % docker ps
+CONTAINER ID   IMAGE                                      COMMAND                  CREATED              STATUS              PORTS                                NAMES
+290de8d42460   devopsdockeruh/simple-web-service:alpine   "/usr/src/app/server"    About a minute ago   Up About a minute                                        goofy_jemison
+85e9339d2839   devopsdockeruh/simple-web-service:ubuntu   "/usr/src/app/server"    2 minutes ago        Up 2 minutes                                             modest_ramanujan
+bach@Bachs-MacBook-Pro ~ % docker image ls
+REPOSITORY                          TAG       IMAGE ID       CREATED         SIZE
+devopsdockeruh/simple-web-service   ubuntu    4e3362e907d5   3 years ago     83MB
+devopsdockeruh/simple-web-service   alpine    fd312adc88e0   3 years ago     15.7MB

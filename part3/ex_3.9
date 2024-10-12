@@ -1,0 +1,31 @@
+# Build stage
+FROM alpine:edge AS build
+
+RUN apk update && apk upgrade && apk add --no-cache go gcc musl-dev ca-certificates
+
+WORKDIR /app
+
+COPY . .
+
+ENV REQUEST_ORIGIN="http://localhost:5001"
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+# Build the application statically
+RUN go build -ldflags '-extldflags "-static"' -o server
+
+RUN go test ./...
+
+# Run stage
+FROM scratch
+
+# Copy CA certificates for HTTPS requests
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+WORKDIR /
+
+COPY --from=build /app/server /server
+
+CMD ["/server"]
+
+# Result: size of image is 19.4MB

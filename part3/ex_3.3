@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Check if correct number of arguments are provided
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <GitHub_Repository> <Docker_Hub_Repository>"
+    exit 1
+fi
+
+# Assign arguments to variables
+GITHUB_REPO=$1
+DOCKER_HUB_REPO=$2
+
+# Check if Docker Hub credentials are provided
+if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_PASSWORD" ]; then
+    echo "Error: Docker Hub credentials not provided"
+    echo "Please set DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD environment variables"
+    exit 1
+fi
+
+# Extract repository name from GitHub URL
+REPO_NAME=$(basename $GITHUB_REPO)
+
+# Clone the GitHub repository
+git clone https://github.com/$GITHUB_REPO.git
+cd $REPO_NAME
+
+# Build Docker image
+docker build -t $DOCKER_HUB_REPO .
+
+# Log in to Docker Hub using environment variables
+echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+# Push the image to Docker Hub
+docker push $DOCKER_HUB_REPO
+
+# Clean up: remove the cloned repository
+cd ..
+rm -rf $REPO_NAME
+
+echo "Process completed successfully!"

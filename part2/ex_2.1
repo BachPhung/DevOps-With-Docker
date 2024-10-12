@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  ex-2.1:
+    image: devopsdockeruh/simple-web-service
+    volumes:
+      - ./text.log:/usr/src/app/text.log
+    build: .
+    container_name: ex-2.1

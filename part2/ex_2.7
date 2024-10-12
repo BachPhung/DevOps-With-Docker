@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: example-frontend
+    ports:
+      - 5001:5001
+    container_name: frontend
+
+  backend:
+    image: example-backend
+    ports:
+      - 8080:8080
+    container_name: backend
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=test
+      - POSTGRES_HOST=database
+    depends_on:
+      - database
+      - redis
+
+  database:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=test
+      - POSTGRES_HOST_PORT=5432
+    container_name: database-test
+    volumes:
+      - ./database-backups:/var/lib/postgresql/data
+
+ 
+
+  redis:
+    image: redis:7.4.1
+    ports:
+      - 6379:6379

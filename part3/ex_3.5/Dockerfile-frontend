@@ -1,0 +1,29 @@
+FROM node:16-alpine AS builder
+
+WORKDIR /app
+
+RUN useradd -m appuser
+
+USER appuser
+
+RUN chown appuser /app
+
+COPY package* .
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM node:16-alpine AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app/build /app/build
+
+RUN npm install -g serve
+
+EXPOSE 5001
+
+CMD ["serve", "-s", "-l", "5001", "/app/build"]

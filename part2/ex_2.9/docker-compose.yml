@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: example-frontend
+    ports:
+      - 5001:5001
+    container_name: frontend
+    networks:
+      - webapp-network
+
+  backend:
+    image: example-backend
+    ports:
+      - 8080:8080
+    container_name: backend
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=test
+      - POSTGRES_HOST=database
+    depends_on:
+      - database
+      - redis
+    networks:
+      - webapp-network
+
+  database:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=test
+      - POSTGRES_HOST_PORT=5436
+    container_name: database-test
+    volumes:
+      - ./database-backups:/var/lib/postgresql/data
+    networks:
+      - webapp-network
+  
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - webapp-network
+  
+  redis:
+    image: redis:7.4.1
+    ports:
+      - 6379:6379
+    networks:
+      - webapp-network
+networks:
+  webapp-network:
+    driver: bridge

@@ -1,0 +1,24 @@
+# Build stage
+FROM alpine:edge AS build
+
+RUN apk update && apk upgrade && apk add --no-cache go gcc g++
+
+WORKDIR /app
+
+COPY . .
+
+ENV REQUEST_ORIGIN="http://localhost:5001"
+
+# Build the application and run tests
+RUN go build -o server
+
+RUN go test ./...
+
+# Run stage
+FROM alpine:edge
+
+WORKDIR /app
+
+COPY --from=build /app/server /app/server
+
+CMD ["./server"]
